@@ -16,7 +16,6 @@ def collate_fn(batch):
     im2 = torch.stack(im2)#.permute(0, 2, 3, 1)
     return im1, im2
 
-annot_path = "/home/ozan/projects/CV/category/Anno_coarse/list_attr_img.txt"
 ds = AttributePairsDataset(
         annot_path="data/category/Anno_coarse/list_attr_img.txt",
         pairs_per_class=20,
