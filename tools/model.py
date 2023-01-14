@@ -12,9 +12,7 @@ class AttEmbeddingModel(pl.LightningModule):
         model = timm.create_model('resnet18', pretrained=True, num_classes=0)
         self.backbone = nn.Sequential(*list(model.children())[:-5]).cuda()
         self.emb_extractor = LatentEmbeddingExtractor(beta=3.0)
-
         self.cos = nn.CosineSimilarity(dim=1, eps=1e-6)
-
 
     def forward(self, i1, i2 = None):
         f1 = self.backbone(i1)
@@ -26,15 +24,16 @@ class AttEmbeddingModel(pl.LightningModule):
         raise NotImplementedError()
 
     def training_step(self, train_batch, batch_idx):
-        embs, dis_embs = self.forward(train_batch)
+        im1, im2 = train_batch
+        embs, dis_embs = self.forward(im1, im2)
         emb1, emb2 = embs
         dis_emb1, dis_emb2 = dis_embs
 
         # Increse cos similarity with similars
-        sim = self.cos(emb1, emb2)
+        sim = self.cos(emb1, emb2).mean()
 
         # Decrease cos similarity with dissimilars
-        dis = self.cos(dis_emb1, dis_emb2)
+        dis = self.cos(dis_emb1, dis_emb2).mean()
 
         loss = - sim + dis
 

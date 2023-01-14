@@ -63,7 +63,7 @@ class LatentEmbeddingExtractor(pl.LightningModule):
             return (f1_emb, f2_emb), (f1_dis_emb, f2_dis_emb)
 
 # %%
-# Test:
+# Test
 if __name__ == "__main__":
     import numpy as np
     import seaborn as sns
