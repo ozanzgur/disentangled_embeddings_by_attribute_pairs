@@ -10,7 +10,7 @@ class AttEmbeddingModel(pl.LightningModule):
     def __init__(self):
         super(AttEmbeddingModel, self).__init__()
         model = timm.create_model('resnet18', pretrained=True, num_classes=0)
-        self.backbone = nn.Sequential(*list(model.children())[:-5]).cuda()
+        self.backbone = nn.Sequential(*list(model.children())[:-6]).cuda()
         self.emb_extractor = LatentEmbeddingExtractor(beta=3.0)
         self.cos = nn.CosineSimilarity(dim=1, eps=1e-6)
 
@@ -33,9 +33,10 @@ class AttEmbeddingModel(pl.LightningModule):
         sim = self.cos(emb1, emb2).mean()
 
         # Decrease cos similarity with dissimilars
-        dis = self.cos(dis_emb1, dis_emb2).mean()
+        dis = self.cos(emb1, dis_emb1).mean() + self.cos(emb2, dis_emb2).mean()
+        dis = dis / 2.0
 
-        loss = - sim + dis
+        loss = - sim + dis + 1.0
 
         self.log('train_loss', loss, rank_zero_only=True)
         self.log('similar_similarity', sim, rank_zero_only=True)

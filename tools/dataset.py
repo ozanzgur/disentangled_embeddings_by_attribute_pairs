@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     dataset = AttributePairsDataset(
         annot_path="../data/category/Anno_coarse/list_attr_img.txt",
-        pairs_per_class=20,
+        pairs_per_class=200,
         img_dir="../data/category",
         transform=get_transform()
     )
