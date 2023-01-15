@@ -19,7 +19,7 @@ def collate_fn(batch):
 
 ds = AttributePairsDataset(
         annot_path="data/category/Anno_coarse/list_attr_img.txt",
-        pairs_per_class=250,
+        pairs_per_class=2500,
         img_dir="data/category",
         transform=get_transform()
     )
@@ -33,7 +33,7 @@ train_dataloader = DataLoader(ds,
 
 # %%
 # Training
-model = AttEmbeddingModel(beta=2.8, alpha=1e-2)
+model = AttEmbeddingModel(beta=2.0, alpha=1e-3)
 trainer = pl.Trainer(
         precision=16, accelerator="gpu", devices=1,
         gradient_clip_val=0.25, max_epochs=25,

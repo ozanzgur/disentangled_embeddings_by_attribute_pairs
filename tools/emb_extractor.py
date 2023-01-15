@@ -41,10 +41,10 @@ class LatentEmbeddingExtractor(pl.LightningModule):
         # similarities s: (b, h*w, h*w)
         s = torch.matmul(f1_norm, f2_norm.transpose(2, 1))
 
-        f1_std = torch.std(f1_flat, dim=2, unbiased=False, keepdim=True)
-        f2_std = torch.std(f2_flat, dim=2, unbiased=False, keepdim=True)
-        s_norm = torch.matmul(f1_std, f2_std.transpose(1, 2))
-        s = s * torch.exp(s_norm)#torch.log(s_norm + 1.0)
+        #f1_std = torch.std(f1_flat, dim=2, unbiased=False, keepdim=True)
+        #f2_std = torch.std(f2_flat, dim=2, unbiased=False, keepdim=True)
+        #s_norm = torch.matmul(f1_std, f2_std.transpose(1, 2))
+        #s = s * torch.exp(s_norm)#torch.log(s_norm + 1.0)
 
         sim_f1, sim_f2 = self.get_s1_s2(s, beta)
 

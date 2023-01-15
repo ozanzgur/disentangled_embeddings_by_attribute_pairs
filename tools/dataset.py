@@ -27,6 +27,7 @@ class AttributePairsDataset(Dataset):
                         annots[i_class].append(tokens[0])
 
         self.annots = annots
+        annots = annots[:10]
         self.pairs = self.create_pairs(pairs_per_class)
         print(f"Created pairs: {len(self.pairs)}")
 
