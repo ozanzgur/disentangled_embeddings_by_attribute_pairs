@@ -11,20 +11,21 @@ from tools.preprocessing import get_transform
 from tools.model import AttEmbeddingModel
 
 def collate_fn(batch):
-    im1, im2 = list(zip(*batch))
+    ims, cls_idx = list(zip(*batch))
+    im1, im2 = list(zip(*ims))
     im1 = torch.stack(im1)
     im2 = torch.stack(im2)
     return im1, im2
 
 ds = AttributePairsDataset(
         annot_path="data/category/Anno_coarse/list_attr_img.txt",
-        pairs_per_class=200,
+        pairs_per_class=250,
         img_dir="data/category",
         transform=get_transform()
     )
 train_dataloader = DataLoader(ds,
-        batch_size=10,
-        shuffle=False,
+        batch_size=80,
+        shuffle=True,
         num_workers=8, 
         pin_memory=True,
         collate_fn=collate_fn
@@ -32,7 +33,7 @@ train_dataloader = DataLoader(ds,
 
 # %%
 # Training
-model = AttEmbeddingModel()
+model = AttEmbeddingModel(beta=2.8, alpha=1e-2)
 trainer = pl.Trainer(
         precision=16, accelerator="gpu", devices=1,
         gradient_clip_val=0.25, max_epochs=25,

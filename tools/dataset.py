@@ -36,11 +36,10 @@ class AttributePairsDataset(Dataset):
 
     def create_pairs(self, n_pairs_per_cls):
         pairs = []
-        for class_annots in self.annots:
+        for i_class, class_annots in enumerate(self.annots):
             for _ in range(n_pairs_per_cls):
-                pairs.append(random.sample(class_annots, 2))
+                pairs.append((random.sample(class_annots, 2), i_class))
 
-        random.shuffle(pairs)
         return pairs
 
     def get_img(self, fn):
@@ -52,11 +51,12 @@ class AttributePairsDataset(Dataset):
         return img
 
     def __getitem__(self, i):
-        f1, f2 = self.pairs[i]
+        (f1, f2), i_cls = self.pairs[i]
         img1 = self.get_img(f1)
         img2 = self.get_img(f2)
 
-        return img1, img2
+        return (img1, img2), i_cls
+
 # %%
 # Test
 if __name__ == "__main__":
@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
     print(len(dataset))
 
-    im1, im2 = dataset[0]
+    (im1, im2), i_cls = dataset[0]
     print(im1.shape)
     print(im2.shape)
 # %%

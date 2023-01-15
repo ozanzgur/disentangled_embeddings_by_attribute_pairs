@@ -7,19 +7,21 @@ import pytorch_lightning as pl
 from tools.emb_extractor import LatentEmbeddingExtractor
 
 class AttEmbeddingModel(pl.LightningModule):
-    def __init__(self):
+    def __init__(self, beta=1.0, alpha=1.0):
         super(AttEmbeddingModel, self).__init__()
         model = timm.create_model('resnet18', pretrained=True, num_classes=0)
-        self.backbone = nn.Sequential(*list(model.children())[:-6]).cuda()
-        self.emb_extractor = LatentEmbeddingExtractor(beta=3.0)
+        self.backbone = nn.Sequential(*list(model.children())[:-4]).cuda()
+        self.emb_extractor = LatentEmbeddingExtractor()
         self.cos = nn.CosineSimilarity(dim=1, eps=1e-6)
+        self.beta = beta
+        self.alpha = alpha
 
-    def forward(self, i1, i2 = None):
+    def forward(self, i1, i2=None, return_att=False):
         f1 = self.backbone(i1)
         f2 = self.backbone(i2)
 
         if not i2 is None:
-            return self.emb_extractor(f1, f2)
+            return self.emb_extractor(f1, f2, debug=return_att, alpha=self.alpha, beta=self.beta)
 
         raise NotImplementedError()
 
